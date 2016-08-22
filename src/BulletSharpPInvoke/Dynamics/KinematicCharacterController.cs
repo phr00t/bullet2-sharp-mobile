@@ -37,10 +37,10 @@ namespace BulletSharp
 			btKinematicCharacterController_setMaxJumpHeight(_native, maxJumpHeight);
 		}
 
-		public void SetUpAxis(int axis)
-		{
-			btKinematicCharacterController_setUpAxis(_native, axis);
-		}
+//		public void SetUpAxis(int axis)
+//		{
+//			btKinematicCharacterController_setUpAxis(_native, axis);
+//		}
 
 		public void SetUseGhostSweepTest(bool useGhostObjectSweepTest)
 		{
@@ -81,8 +81,8 @@ namespace BulletSharp
 		static extern void btKinematicCharacterController_setMaxJumpHeight(IntPtr obj, float maxJumpHeight);
 		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
 		static extern void btKinematicCharacterController_setMaxSlope(IntPtr obj, float slopeRadians);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern void btKinematicCharacterController_setUpAxis(IntPtr obj, int axis);
+//		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
+//		static extern void btKinematicCharacterController_setUpAxis(IntPtr obj, int axis);
 		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
 		static extern void btKinematicCharacterController_setUseGhostSweepTest(IntPtr obj, bool useGhostObjectSweepTest);
 	}

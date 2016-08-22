@@ -12,6 +12,6 @@ extern "C"
 	EXPORT void btKinematicCharacterController_setJumpSpeed(btKinematicCharacterController* obj, btScalar jumpSpeed);
 	EXPORT void btKinematicCharacterController_setMaxJumpHeight(btKinematicCharacterController* obj, btScalar maxJumpHeight);
 	EXPORT void btKinematicCharacterController_setMaxSlope(btKinematicCharacterController* obj, btScalar slopeRadians);
-	EXPORT void btKinematicCharacterController_setUpAxis(btKinematicCharacterController* obj, int axis);
+	EXPORT void btKinematicCharacterController_setUpAxis(btKinematicCharacterController* obj, btScalar* axis);
 	EXPORT void btKinematicCharacterController_setUseGhostSweepTest(btKinematicCharacterController* obj, bool useGhostObjectSweepTest);
 }

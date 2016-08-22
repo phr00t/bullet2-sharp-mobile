@@ -56,9 +56,10 @@ void btKinematicCharacterController_setMaxSlope(btKinematicCharacterController* 
 	obj->setMaxSlope(slopeRadians);
 }
 
-void btKinematicCharacterController_setUpAxis(btKinematicCharacterController* obj, const btVector3& up)
+void btKinematicCharacterController_setUpAxis(btKinematicCharacterController* obj, btScalar* up)
 {
-	obj->setUp(up);
+	VECTOR3_CONV(up);
+	obj->setUp(VECTOR3_USE(up));
 }
 
 void btKinematicCharacterController_setUseGhostSweepTest(btKinematicCharacterController* obj, bool useGhostObjectSweepTest)
