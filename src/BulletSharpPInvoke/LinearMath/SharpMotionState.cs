@@ -3,39 +3,35 @@
 using ObjCRuntime;
 #endif
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using SiliconStudio.Core.Mathematics;
 
 namespace BulletSharp
 {
     public class SharpMotionState : IDisposable
     {
-        internal IntPtr _native;
+        internal IntPtr Native;
         private GCHandle _handle;
 
         public SharpMotionState()
         {
             _handle = GCHandle.Alloc(this);
-            _native = SharpMotionState_new(GCHandle.ToIntPtr(_handle));
+            Native = SharpMotionState_new(GCHandle.ToIntPtr(_handle));
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
-            SharpMotionState_delete(_native);
+            SharpMotionState_delete(Native);
             _handle.Free();
-            _native = IntPtr.Zero;
+            Native = IntPtr.Zero;
         }
 
-        [UnmanagedFunctionPointer(Native.Conv)]
-        delegate void GetWorldTransformUnmanagedDelegate(IntPtr sharpReference, [Out] out Matrix transform);
+        [UnmanagedFunctionPointer(BulletSharp.Native.Conv)]
+        private delegate void GetWorldTransformUnmanagedDelegate(IntPtr sharpReference, [Out] out Matrix transform);
 
-        [UnmanagedFunctionPointer(Native.Conv)]
-        delegate void SetWorldTransformUnmanagedDelegate(IntPtr sharpReference, [In] ref Matrix transform);
+        [UnmanagedFunctionPointer(BulletSharp.Native.Conv)]
+        private delegate void SetWorldTransformUnmanagedDelegate(IntPtr sharpReference, [In] ref Matrix transform);
 
 #if __iOS__
         [MonoPInvokeCallback(typeof(GetWorldTransformUnmanagedDelegate))]
@@ -48,8 +44,10 @@ namespace BulletSharp
                 var obj = (SharpMotionState)GCHandle.FromIntPtr(sharpReference).Target;
                 obj.GetWorldTransform(out transform);
             }
-            catch(Exception)
-            { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
 #if __iOS__
@@ -62,8 +60,10 @@ namespace BulletSharp
                 var obj = (SharpMotionState)GCHandle.FromIntPtr(sharpReference).Target;
                 obj.SetWorldTransform(transform);
             }
-            catch(Exception)
-            { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private static readonly GetWorldTransformUnmanagedDelegate GetWorldTransformUnmanaged = InternalGetWorldTransform;
@@ -89,16 +89,16 @@ namespace BulletSharp
         }
 
 #if !__iOS__
-        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-        static extern IntPtr SharpMotionState_Setup(IntPtr getWorldTransformCallback, IntPtr setWorldTransformCallback);  
+        [DllImport(BulletSharp.Native.Dll, CallingConvention = BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+        private static extern IntPtr SharpMotionState_Setup(IntPtr getWorldTransformCallback, IntPtr setWorldTransformCallback);
 #else
-        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-        static extern IntPtr SharpMotionState_Setup(GetWorldTransformUnmanagedDelegate getWorldTransformCallback, SetWorldTransformUnmanagedDelegate setWorldTransformCallback); 
+        [DllImport(BulletSharp.Native.Dll, CallingConvention = BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+        private static extern IntPtr SharpMotionState_Setup(GetWorldTransformUnmanagedDelegate getWorldTransformCallback, SetWorldTransformUnmanagedDelegate setWorldTransformCallback); 
 #endif
 
-        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-        static extern IntPtr SharpMotionState_new(IntPtr sharpReference);
-        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-        static extern void SharpMotionState_delete(IntPtr obj);
+        [DllImport(BulletSharp.Native.Dll, CallingConvention = BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+        private static extern IntPtr SharpMotionState_new(IntPtr sharpReference);
+        [DllImport(BulletSharp.Native.Dll, CallingConvention = BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+        private static extern void SharpMotionState_delete(IntPtr obj);
     }
 }

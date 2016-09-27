@@ -582,7 +582,7 @@ namespace BulletSharp
 			get { return btCollisionWorld_ConvexResultCallback_hasHit(_native); }
 		}
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -723,40 +723,22 @@ namespace BulletSharp
         readonly List<Vector3> mHitsPointWorld = new List<Vector3>();
         readonly List<CollisionObject> mCollisionObjects = new List<CollisionObject>();
 
-        public List<Vector3> HitNormalWorld
-        {
-            get
-            {
-                return mHitsNormalWorld;
-            }
-        }
+        public List<Vector3> HitNormalWorld => mHitsNormalWorld;
 
-        public List<Vector3> HitPointWorld
-        {
-            get
-            {
-                return mHitsPointWorld;
-            }
-        }
+        public List<Vector3> HitPointWorld => mHitsPointWorld;
 
-        public List<CollisionObject> CollisionObjects
-        {
-            get
-            {
-                return mCollisionObjects;
-            }
-        }
+        public List<CollisionObject> CollisionObjects => mCollisionObjects;
 
         [UnmanagedFunctionPointer(Native.Conv)]
         protected delegate float AddSingleResultUnmanagedDelegate(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal);
 
-        AddSingleResultUnmanagedDelegate _addSingleResult;
-
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly AddSingleResultUnmanagedDelegate _addSingleResult;
 
 #if __iOS__
         [MonoPInvokeCallback(typeof(AddSingleResultUnmanagedDelegate))]
 #endif
-        static float AddSingleResultUnmanaged(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal)
+        private static float AddSingleResultUnmanaged(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal)
         {
             var obj = (AllHitsConvexResultCallback)GCHandle.FromIntPtr(sharpReference).Target;
 
@@ -772,24 +754,25 @@ namespace BulletSharp
 		{
 		}
 
-        private GCHandle mHandle;
+        private GCHandle _mHandle;
 
 		public AllHitsConvexResultCallback()
             : base(IntPtr.Zero)
 		{
-		    mHandle = GCHandle.Alloc(this);
+		    _mHandle = GCHandle.Alloc(this);
 
-            _addSingleResult = new AddSingleResultUnmanagedDelegate(AddSingleResultUnmanaged);
+            _addSingleResult = AddSingleResultUnmanaged;
 #if !__iOS__
-            _native = btCollisionWorld_AllHitsConvexResultCallback_new(Marshal.GetFunctionPointerForDelegate(_addSingleResult), GCHandle.ToIntPtr(mHandle));
+            _native = btCollisionWorld_AllHitsConvexResultCallback_new(Marshal.GetFunctionPointerForDelegate(_addSingleResult), GCHandle.ToIntPtr(_mHandle));
 #else
-            _native = btCollisionWorld_AllHitsConvexResultCallback_new(_addSingleResult, GCHandle.ToIntPtr(mHandle));
+            _native = btCollisionWorld_AllHitsConvexResultCallback_new(_addSingleResult, GCHandle.ToIntPtr(_mHandle));
 #endif
 		}
 
-        ~AllHitsConvexResultCallback()
+        public override void Dispose()
         {
-            mHandle.Free();
+            _mHandle.Free();
+            GC.SuppressFinalize(this);
         }
 
 #if !__iOS__

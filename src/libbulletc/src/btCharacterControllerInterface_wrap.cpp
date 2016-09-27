@@ -8,9 +8,10 @@ bool btCharacterControllerInterface_canJump(btCharacterControllerInterface* obj)
 	return obj->canJump();
 }
 
-void btCharacterControllerInterface_jump(btCharacterControllerInterface* obj)
+void btCharacterControllerInterface_jump(btCharacterControllerInterface* obj, btScalar* jumpVector)
 {
-	obj->jump();
+	VECTOR3_CONV(jumpVector);
+	obj->jump(VECTOR3_USE(jumpVector));
 }
 
 bool btCharacterControllerInterface_onGround(btCharacterControllerInterface* obj)

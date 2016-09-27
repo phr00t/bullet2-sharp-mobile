@@ -349,14 +349,10 @@ namespace BulletSharp
 
 		protected virtual void Dispose(bool disposing)
 		{
-            if (nativeHandle.IsAllocated)
-            {
-                nativeHandle.Free();
-            }
-
 		    if (_native == IntPtr.Zero) return;
 
-		    btCollisionObject_delete(_native);
+            nativeHandle.Free();
+            btCollisionObject_delete(_native);
 		    _native = IntPtr.Zero;
 		}
 

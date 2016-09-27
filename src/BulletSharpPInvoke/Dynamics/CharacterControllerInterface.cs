@@ -17,9 +17,9 @@ namespace BulletSharp
 			return btCharacterControllerInterface_canJump(_native);
 		}
 
-		public void Jump()
+		public void Jump(ref Vector3 jumpVector)
 		{
-			btCharacterControllerInterface_jump(_native);
+			btCharacterControllerInterface_jump(_native, ref jumpVector);
 		}
 
 		public bool OnGround()
@@ -67,7 +67,7 @@ namespace BulletSharp
 		static extern bool btCharacterControllerInterface_canJump(IntPtr obj);
 
 	    [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-	    static extern void btCharacterControllerInterface_jump(IntPtr obj);
+	    static extern void btCharacterControllerInterface_jump(IntPtr obj, [In] ref Vector3 jumpVector);
 
         [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.I1)]

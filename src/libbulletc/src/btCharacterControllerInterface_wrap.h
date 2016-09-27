@@ -3,7 +3,7 @@
 extern "C"
 {
 	EXPORT bool btCharacterControllerInterface_canJump(btCharacterControllerInterface* obj);
-	EXPORT void btCharacterControllerInterface_jump(btCharacterControllerInterface* obj);
+	EXPORT void btCharacterControllerInterface_jump(btCharacterControllerInterface* obj, btScalar* jumpVector);
 	EXPORT bool btCharacterControllerInterface_onGround(btCharacterControllerInterface* obj);
 	EXPORT void btCharacterControllerInterface_playerStep(btCharacterControllerInterface* obj, btCollisionWorld* collisionWorld, btScalar dt);
 	EXPORT void btCharacterControllerInterface_preStep(btCharacterControllerInterface* obj, btCollisionWorld* collisionWorld);

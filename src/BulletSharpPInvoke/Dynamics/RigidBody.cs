@@ -30,7 +30,7 @@ namespace BulletSharp
         */
 
 		public RigidBody(float mass, SharpMotionState motionState, CollisionShape collisionShape, Vector3 localInertia)
-			: base(btRigidBody_new2(mass, motionState._native, collisionShape._native, ref localInertia))
+			: base(btRigidBody_new2(mass, motionState.Native, collisionShape._native, ref localInertia))
 		{
             //_motionState = motionState;
 		}
