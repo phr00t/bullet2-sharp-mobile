@@ -682,6 +682,21 @@ AllHitsConvexResultCallback* btCollisionWorld_AllHitsConvexResultCallback_new(pA
 	return new AllHitsConvexResultCallback(callback, sharpReference);
 }
 
+void btCollisionWorld_AllHitsConvexResultCallback_delete(AllHitsConvexResultCallback* obj)
+{
+	delete obj;
+}
+
+AllHitsRayResultCallback* btCollisionWorld_AllHitsRayResultCallback_new2(pAddSingleResult2 callback, void* sharpReference, btScalar* rayFrom, btScalar* rayTo)
+{
+	return new AllHitsRayResultCallback(callback, sharpReference, rayFrom, rayTo);
+}
+
+void btCollisionWorld_AllHitsRayResultCallback_delete2(AllHitsRayResultCallback* obj)
+{
+	delete obj;
+}
+
 #include <vector>
 
 #define MAX_CONTACTS_PER_OBJECT 1024

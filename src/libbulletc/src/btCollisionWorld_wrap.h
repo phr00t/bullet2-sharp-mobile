@@ -9,6 +9,7 @@
 #define pAddSingleResult2 void*
 
 #define AllHitsConvexResultCallback void
+#define AllHitsRayResultCallback void
 #else
 typedef bool (*pNeedsCollision)(btBroadphaseProxy* proxy0);
 typedef bool (*pAddSingleResult)(btManifoldPoint& cp,
@@ -32,7 +33,7 @@ public:
 	virtual bool baseNeedsCollision(btBroadphaseProxy* proxy0) const;
 };
 
-typedef float (*pAddSingleResult2)(const void* sharpReference, const btCollisionObject* object, btVector3& point, btVector3& normal);
+typedef void (*pAddSingleResult2)(const void* sharpReference, const btCollisionObject* object, btVector3& point, btVector3& normal, float hitFraction);
 
 class AllHitsConvexResultCallback : public btCollisionWorld::ConvexResultCallback
 {
@@ -44,18 +45,58 @@ public:
 	{				
 		btVector3 normal = convexResult.m_hitNormalLocal;
 		btVector3 point = convexResult.m_hitPointLocal;
+		float hitFraction = convexResult.m_hitFraction;
 
 		if (!normalInWorldSpace)
 		{
 			normal = convexResult.m_hitCollisionObject->getWorldTransform().getBasis()*convexResult.m_hitNormalLocal;
 		} 
 
-		if(mCb) mCb(mSharpReference, convexResult.m_hitCollisionObject, point, normal);
+		if(mCb) mCb(mSharpReference, convexResult.m_hitCollisionObject, point, normal, hitFraction);
 
 		return convexResult.m_hitFraction;
 	}
 
 private:
+	pAddSingleResult2 mCb;
+	void* mSharpReference;
+};
+
+class AllHitsRayResultCallback : public btCollisionWorld::RayResultCallback
+{
+public:
+	AllHitsRayResultCallback(pAddSingleResult2 callback, void* sharpReference, btScalar* rayFromWorld, btScalar* rayToWorld) : mCb(callback), mSharpReference(sharpReference)
+	{
+		VECTOR3_CONV(rayFromWorld);
+		m_rayFromWorld = VECTOR3_USE(rayFromWorld);
+		VECTOR3_CONV(rayToWorld);
+		m_rayToWorld = VECTOR3_USE(rayToWorld);
+	}
+
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+	{				
+		btVector3 normal;
+		btVector3 point;
+		point.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
+		float hitFraction = rayResult.m_hitFraction;
+
+		if (normalInWorldSpace)
+		{
+			normal = rayResult.m_hitNormalLocal;
+		} else
+		{
+			///need to transform normal into worldspace
+			normal = m_collisionObject->getWorldTransform().getBasis()*rayResult.m_hitNormalLocal;
+		}
+
+		if(mCb) mCb(mSharpReference, rayResult.m_collisionObject, point, normal, hitFraction);
+
+		return rayResult.m_hitFraction;
+	}
+
+private:
+	btVector3 m_rayFromWorld;//used to calculate hitPointWorld from hitFraction
+	btVector3 m_rayToWorld;
 	pAddSingleResult2 mCb;
 	void* mSharpReference;
 };
@@ -166,6 +207,9 @@ extern "C"
 	EXPORT bool btCollisionWorld_ContactResultCallbackWrapper_needsCollision(btCollisionWorld_ContactResultCallbackWrapper* obj, btBroadphaseProxy* proxy0);
 
 	EXPORT AllHitsConvexResultCallback* btCollisionWorld_AllHitsConvexResultCallback_new(pAddSingleResult2 callback, void* sharpReference);
+	EXPORT void btCollisionWorld_AllHitsConvexResultCallback_delete(AllHitsConvexResultCallback* obj);
+	EXPORT AllHitsRayResultCallback* btCollisionWorld_AllHitsRayResultCallback_new2(pAddSingleResult2 callback, void* sharpReference, btScalar* rayFrom, btScalar* rayTo);
+	EXPORT void btCollisionWorld_AllHitsRayResultCallback_delete2(AllHitsRayResultCallback* obj);
 
 	EXPORT btCollisionWorld* btCollisionWorld_new(btDispatcher* dispatcher, btBroadphaseInterface* broadphasePairCache, btCollisionConfiguration* collisionConfiguration);
 	EXPORT void btCollisionWorld_addCollisionObject(btCollisionWorld* obj, btCollisionObject* collisionObject, short collisionFilterGroup, short collisionFilterMask);

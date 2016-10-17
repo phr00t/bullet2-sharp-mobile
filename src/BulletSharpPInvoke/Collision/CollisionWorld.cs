@@ -209,7 +209,7 @@ namespace BulletSharp
 			get { return btCollisionWorld_RayResultCallback_hasHit(_native); }
 		}
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -340,104 +340,6 @@ namespace BulletSharp
 		static extern void btCollisionWorld_ClosestRayResultCallback_setRayFromWorld(IntPtr obj, [In] ref Vector3 value);
 		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
 		static extern void btCollisionWorld_ClosestRayResultCallback_setRayToWorld(IntPtr obj, [In] ref Vector3 value);
-	}
-
-	public class AllHitsRayResultCallback : RayResultCallback
-	{
-		AlignedVector3Array _hitNormalWorld, _hitPointWorld;
-		AlignedCollisionObjectArray _collisionObjects;
-
-		internal AllHitsRayResultCallback(IntPtr native)
-			: base(native)
-		{
-		}
-
-		public AllHitsRayResultCallback(Vector3 rayFromWorld, Vector3 rayToWorld)
-			: base(btCollisionWorld_AllHitsRayResultCallback_new(ref rayFromWorld, ref rayToWorld))
-		{
-		}
-
-		public AlignedCollisionObjectArray CollisionObjects
-		{
-			get
-			{
-				if (_collisionObjects == null)
-				{
-					_collisionObjects = new AlignedCollisionObjectArray(btCollisionWorld_AllHitsRayResultCallback_getCollisionObjects(_native), true);
-				}
-				return _collisionObjects;
-			}
-		}
-		/*
-		public AlignedFloatArray HitFractions
-		{
-			get { return btCollisionWorld_AllHitsRayResultCallback_getHitFractions(_native); }
-			set { btCollisionWorld_AllHitsRayResultCallback_setHitFractions(_native, value._native); }
-		}
-		*/
-		public AlignedVector3Array HitNormalWorld
-		{
-			get
-			{
-				if (_hitNormalWorld == null)
-				{
-					_hitNormalWorld = new AlignedVector3Array(btCollisionWorld_AllHitsRayResultCallback_getHitNormalWorld(_native), true);
-				}
-				return _hitNormalWorld;
-			}
-		}
-
-		public AlignedVector3Array HitPointWorld
-		{
-			get
-			{
-				if (_hitPointWorld == null)
-				{
-					_hitPointWorld = new AlignedVector3Array(btCollisionWorld_AllHitsRayResultCallback_getHitPointWorld(_native), true);
-				}
-				return _hitPointWorld;
-			}
-		}
-
-		public Vector3 RayFromWorld
-		{
-			get
-			{
-				Vector3 value;
-				btCollisionWorld_AllHitsRayResultCallback_getRayFromWorld(_native, out value);
-				return value;
-			}
-			set { btCollisionWorld_AllHitsRayResultCallback_setRayFromWorld(_native, ref value); }
-		}
-
-		public Vector3 RayToWorld
-		{
-			get
-			{
-				Vector3 value;
-				btCollisionWorld_AllHitsRayResultCallback_getRayToWorld(_native, out value);
-				return value;
-			}
-			set { btCollisionWorld_AllHitsRayResultCallback_setRayToWorld(_native, ref value); }
-		}
-
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_new([In] ref Vector3 rayFromWorld, [In] ref Vector3 rayToWorld);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_getCollisionObjects(IntPtr obj);
-
-	    [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_getHitNormalWorld(IntPtr obj);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_getHitPointWorld(IntPtr obj);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern void btCollisionWorld_AllHitsRayResultCallback_getRayFromWorld(IntPtr obj, [Out] out Vector3 value);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern void btCollisionWorld_AllHitsRayResultCallback_getRayToWorld(IntPtr obj, [Out] out Vector3 value);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern void btCollisionWorld_AllHitsRayResultCallback_setRayFromWorld(IntPtr obj, [In] ref Vector3 value);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-		static extern void btCollisionWorld_AllHitsRayResultCallback_setRayToWorld(IntPtr obj, [In] ref Vector3 value);
 	}
 
 	public class LocalConvexResult : IDisposable
@@ -719,18 +621,8 @@ namespace BulletSharp
 
     public class AllHitsConvexResultCallback : ConvexResultCallback
     {
-        readonly List<Vector3> mHitsNormalWorld = new List<Vector3>();
-        readonly List<Vector3> mHitsPointWorld = new List<Vector3>();
-        readonly List<CollisionObject> mCollisionObjects = new List<CollisionObject>();
-
-        public List<Vector3> HitNormalWorld => mHitsNormalWorld;
-
-        public List<Vector3> HitPointWorld => mHitsPointWorld;
-
-        public List<CollisionObject> CollisionObjects => mCollisionObjects;
-
         [UnmanagedFunctionPointer(Native.Conv)]
-        protected delegate float AddSingleResultUnmanagedDelegate(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal);
+        protected delegate void AddSingleResultUnmanagedDelegate(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal, float hitFraction);
 
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly AddSingleResultUnmanagedDelegate _addSingleResult;
@@ -738,15 +630,15 @@ namespace BulletSharp
 #if __iOS__
         [MonoPInvokeCallback(typeof(AddSingleResultUnmanagedDelegate))]
 #endif
-        private static float AddSingleResultUnmanaged(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal)
+        private static void AddSingleResultUnmanaged(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal, float hitFraction)
         {
             var obj = (AllHitsConvexResultCallback)GCHandle.FromIntPtr(sharpReference).Target;
+            obj.AddSingleResult(CollisionObject.GetManaged(collider), ref point, ref normal, hitFraction);
+        }
 
-            obj.mHitsNormalWorld.Add(normal);
-            obj.mHitsPointWorld.Add(point);
-            obj.mCollisionObjects.Add(CollisionObject.GetManaged(collider));
-
-            return 0.0f;
+        public virtual void AddSingleResult(CollisionObject collisionObject, ref Vector3 point, ref Vector3 normal, float hitFraction)
+        {
+            
         }
 
         internal AllHitsConvexResultCallback(IntPtr native)
@@ -772,6 +664,7 @@ namespace BulletSharp
         public override void Dispose()
         {
             _mHandle.Free();
+            btCollisionWorld_AllHitsConvexResultCallback_delete(_native);
             GC.SuppressFinalize(this);
         }
 
@@ -782,9 +675,72 @@ namespace BulletSharp
         [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
         protected static extern IntPtr btCollisionWorld_AllHitsConvexResultCallback_new(AddSingleResultUnmanagedDelegate resultCallback, IntPtr sharpReference);
 #endif
+
+        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
+        protected static extern void btCollisionWorld_AllHitsConvexResultCallback_delete(IntPtr obj);
     }
 
-	public abstract class ContactResultCallback : IDisposable
+    public class AllHitsRayResultCallback : RayResultCallback
+    {
+        [UnmanagedFunctionPointer(Native.Conv)]
+        protected delegate void AddSingleResultUnmanagedDelegate(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal, float hitFraction);
+
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly AddSingleResultUnmanagedDelegate _addSingleResult;
+
+#if __iOS__
+        [MonoPInvokeCallback(typeof(AddSingleResultUnmanagedDelegate))]
+#endif
+        private static void AddSingleResultUnmanaged(IntPtr sharpReference, IntPtr collider, [In] ref Vector3 point, [In] ref Vector3 normal, float hitFraction)
+        {
+            var obj = (AllHitsRayResultCallback)GCHandle.FromIntPtr(sharpReference).Target;
+            obj.AddSingleResult(CollisionObject.GetManaged(collider), ref point, ref normal, hitFraction);
+        }
+
+        public virtual void AddSingleResult(CollisionObject collisionObject, ref Vector3 point, ref Vector3 normal, float hitFraction)
+        {
+
+        }
+
+        internal AllHitsRayResultCallback(IntPtr native)
+            : base(native)
+        {
+        }
+
+        private GCHandle _mHandle;
+
+        public AllHitsRayResultCallback(ref Vector3 from, ref Vector3 to)
+            : base(IntPtr.Zero)
+        {
+            _mHandle = GCHandle.Alloc(this);
+
+            _addSingleResult = AddSingleResultUnmanaged;
+#if !__iOS__
+            _native = btCollisionWorld_AllHitsRayResultCallback_new2(Marshal.GetFunctionPointerForDelegate(_addSingleResult), GCHandle.ToIntPtr(_mHandle), ref from, ref to);
+#else
+            _native = btCollisionWorld_AllHitsRayResultCallback_new2(_addSingleResult, GCHandle.ToIntPtr(_mHandle), ref from, ref to);
+#endif
+        }
+
+        public override void Dispose()
+        {
+            _mHandle.Free();
+            GC.SuppressFinalize(this);
+        }
+
+#if !__iOS__
+        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
+        protected static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_new2(IntPtr resultCallback, IntPtr sharpReference, [In] ref Vector3 rayFromWorld, [In] ref Vector3 rayToWorld);
+#else
+        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
+        protected static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_new(AddSingleResultUnmanagedDelegate resultCallback, IntPtr sharpReference, [In] ref Vector3 rayFromWorld, [In] ref Vector3 rayToWorld);
+#endif
+
+        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
+        protected static extern void btCollisionWorld_AllHitsRayResultCallback_delete2(IntPtr obj);
+    }
+
+    public abstract class ContactResultCallback : IDisposable
 	{
 		internal IntPtr _native;
 
