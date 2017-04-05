@@ -758,13 +758,15 @@ private:
 	std::vector<ContactData>* data;
 };
 
-int SiliconStudioXenko_GetCollisions(btCollisionWorld* world, btCollisionObject* shape, void* dataBuffer)
+int SiliconStudioXenko_GetCollisions(btCollisionWorld* world, btCollisionObject* shape, void* dataBuffer, short int flags, short int group)
 {
 	std::vector<ContactData>* data = (std::vector<ContactData>*)dataBuffer;
 
 	data->clear();
 
 	ContactCallback cb(data);
+	cb.m_collisionFilterGroup = group;
+	cb.m_collisionFilterMask = flags;
 	world->contactTest(shape, cb);
 
 	return data->size();

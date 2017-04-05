@@ -1,3 +1,3 @@
 [submodule "src/bullet"]
 	path = src/bullet
-	url = https://github.com/bulletphysics/bullet3.git
+	url = https://github.com/sinkingsugar/bullet3.git

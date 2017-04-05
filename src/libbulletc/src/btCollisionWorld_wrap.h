@@ -247,6 +247,6 @@ extern "C"
 
 	EXPORT void* SiliconStudioXenko_CreateBuffer();
 	EXPORT void SiliconStudioXenko_DeleteBuffer(void* buffer);
-	EXPORT int SiliconStudioXenko_GetCollisions(btCollisionWorld* world, btCollisionObject* shape, void* dataBuffer);
+	EXPORT int SiliconStudioXenko_GetCollisions(btCollisionWorld* world, btCollisionObject* shape, void* dataBuffer, short int flags, short int group);
 	EXPORT void* SiliconStudioXenko_GetBufferData(void* buffer);
 }

@@ -733,7 +733,7 @@ namespace BulletSharp
         protected static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_new2(IntPtr resultCallback, IntPtr sharpReference, [In] ref Vector3 rayFromWorld, [In] ref Vector3 rayToWorld);
 #else
         [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-        protected static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_new(AddSingleResultUnmanagedDelegate resultCallback, IntPtr sharpReference, [In] ref Vector3 rayFromWorld, [In] ref Vector3 rayToWorld);
+        protected static extern IntPtr btCollisionWorld_AllHitsRayResultCallback_new2(AddSingleResultUnmanagedDelegate resultCallback, IntPtr sharpReference, [In] ref Vector3 rayFromWorld, [In] ref Vector3 rayToWorld);
 #endif
 
         [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
@@ -826,7 +826,8 @@ namespace BulletSharp
 
 		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
 		static extern IntPtr btCollisionWorld_ContactResultCallbackWrapper_new(IntPtr addSingleResult, IntPtr needsCollision);
-		[DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
+
+        [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
 		[return: MarshalAs(UnmanagedType.I1)]
 		static extern bool btCollisionWorld_ContactResultCallbackWrapper_needsCollision(IntPtr obj, IntPtr proxy0);
 	}
@@ -1120,7 +1121,7 @@ namespace BulletSharp
         static extern void SiliconStudioXenko_DeleteBuffer(IntPtr buffer);
 
         [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
-        static extern int SiliconStudioXenko_GetCollisions(IntPtr collisionWorld, IntPtr shape, IntPtr dataBuffer);
+        static extern int SiliconStudioXenko_GetCollisions(IntPtr collisionWorld, IntPtr shape, IntPtr dataBuffer, short flags, short group);
 
         [DllImport(Native.Dll, CallingConvention = Native.Conv), SuppressUnmanagedCodeSecurity]
         static extern IntPtr SiliconStudioXenko_GetBufferData(IntPtr dataBuffer);
@@ -1128,9 +1129,9 @@ namespace BulletSharp
         private readonly IntPtr collisionsBuffer = SiliconStudioXenko_CreateBuffer();
         private readonly IntPtr bufferData;
 
-	    public void GetCollisions(CollisionObject collisionObject, out IntPtr buffer, out int size)
+	    public void GetCollisions(CollisionObject collisionObject, short masks, short group, out IntPtr buffer, out int size)
 	    {
-            size = SiliconStudioXenko_GetCollisions(_native, collisionObject._native, collisionsBuffer);
+            size = SiliconStudioXenko_GetCollisions(_native, collisionObject._native, collisionsBuffer, masks, group);
 	        buffer = bufferData;
 	    }
     }
