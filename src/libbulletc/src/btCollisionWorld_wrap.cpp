@@ -758,7 +758,7 @@ private:
 	std::vector<ContactData>* data;
 };
 
-int SiliconStudioXenko_GetCollisions(btCollisionWorld* world, btCollisionObject* shape, void* dataBuffer, short int flags, short int group)
+int Xenko_GetCollisions(btCollisionWorld* world, btCollisionObject* shape, void* dataBuffer, short int flags, short int group)
 {
 	std::vector<ContactData>* data = (std::vector<ContactData>*)dataBuffer;
 
@@ -772,19 +772,19 @@ int SiliconStudioXenko_GetCollisions(btCollisionWorld* world, btCollisionObject*
 	return data->size();
 }
 
-void* SiliconStudioXenko_CreateBuffer()
+void* Xenko_CreateBuffer()
 {
 	std::vector<ContactData>* buffer = new std::vector<ContactData>(MAX_CONTACTS_PER_OBJECT);
 	return buffer;
 }
 
-void SiliconStudioXenko_DeleteBuffer(void* buffer)
+void Xenko_DeleteBuffer(void* buffer)
 {
 	std::vector<ContactData>* data = (std::vector<ContactData>*)buffer;
 	delete data;
 }
 
-void* SiliconStudioXenko_GetBufferData(void* buffer)
+void* Xenko_GetBufferData(void* buffer)
 {
 	std::vector<ContactData>* data = (std::vector<ContactData>*)buffer;
 	return &(*data)[0];

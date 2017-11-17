@@ -2,7 +2,7 @@
 #if __iOS__
 using ObjCRuntime;
 #endif
-using SiliconStudio.Core.Mathematics;
+using Xenko.Core.Mathematics;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;

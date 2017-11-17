@@ -49,15 +49,15 @@
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release iOS|AnyCPU'">
     <Reference Include="Xamarin.iOS">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\Xamarin.iOS\v1.0\Xamarin.iOS.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\Xamarin.iOS\v1.0\Xamarin.iOS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="SiliconStudio.Core">
-      <HintPath>$(SiliconStudioXenkoDir)\Bin\Windows-Direct3D11\SiliconStudio.Core.dll</HintPath>
+    <Reference Include="Xenko.Core">
+      <HintPath>$(XenkoDir)\Bin\Windows\Xenko.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SiliconStudio.Core.Mathematics">
-      <HintPath>$(SiliconStudioXenkoDir)\Bin\Windows-Direct3D11\SiliconStudio.Core.Mathematics.dll</HintPath>
+    <Reference Include="Xenko.Core.Mathematics">
+      <HintPath>$(XenkoDir)\Bin\Windows\Xenko.Core.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

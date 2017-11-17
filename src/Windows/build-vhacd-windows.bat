@@ -1,6 +1,4 @@
 REM Windows
-call "%PROGRAMFILES(X86)%\Microsoft Visual Studio 14.0\vc\vcvarsall.bat" x86
-
 pushd ..\VHACD_Lib\VHACD
 msbuild VHACD.sln /p:Configuration=Release
 if %ERRORLEVEL% neq 0 GOTO :error_popd

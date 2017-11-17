@@ -1,4 +1,4 @@
-using SiliconStudio.Core.Mathematics;
+using Xenko.Core.Mathematics;
 ﻿/*
 * Copyright (c) 2007-2010 SlimDX Group
 * 

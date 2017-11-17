@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2014 Silicon Studio Corp. (http://siliconstudio.co.jp)
-// This file is distributed under GPL v3. See LICENSE.md for details.
+﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #if !__iOS__
@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BulletSharp;
 using SR = BulletSharp.Resources.Strings;
-using Utilities = SiliconStudio.Core.Utilities;
+using Utilities = Xenko.Core.Utilities;
 
 namespace System.IO
 {

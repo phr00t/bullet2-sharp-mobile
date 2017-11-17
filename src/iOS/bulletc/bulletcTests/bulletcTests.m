@@ -2,8 +2,8 @@
 //  bulletcTests.m
 //  bulletcTests
 //
-//  Created by Sugar on 7/19/14.
-//  Copyright (c) 2014 SiliconStudio. All rights reserved.
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 
 #import <XCTest/XCTest.h>
